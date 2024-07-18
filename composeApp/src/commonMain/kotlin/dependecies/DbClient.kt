@@ -1,3 +1,5 @@
 package dependecies
 
-expect class DbClient
+expect class DbClient {
+    fun getDataFromDb(): String
+}

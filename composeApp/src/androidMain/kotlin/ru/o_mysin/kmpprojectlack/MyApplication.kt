@@ -1,7 +1,7 @@
 package ru.o_mysin.kmpprojectlack
 
 import android.app.Application
-import initKoin
+import di.initKoin
 import org.koin.android.ext.koin.androidContext
 
 class MyApplication : Application() {

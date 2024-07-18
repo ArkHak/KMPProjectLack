@@ -7,5 +7,5 @@ interface MyRepository {
 class MyRepositoryImpl(
     private val dbClient: DbClient,
 ) : MyRepository {
-    override fun helloWorld(): String = "Hello World from RepoDb"
+    override fun helloWorld(): String = "Hello World from RepoDb by ${dbClient.getDataFromDb()}"
 }
