@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -72,6 +73,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.koin.androidx.compose)
+
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -85,6 +88,8 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.navigation.compose)
+
+            implementation(libs.bundles.ktor)
         }
 
         commonTest.dependencies {
@@ -96,15 +101,23 @@ kotlin {
             implementation(compose.uiTest)
         }
 
+        nativeMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.oshi.core)
+
+            implementation(libs.ktor.client.okhttp)
         }
 
         wasmJsMain.dependencies {
             implementation(libs.oshi.core)
             implementation(libs.lifecycle.viewmodel.wasm)
+
+            implementation(libs.ktor.client.js)
         }
     }
 }
