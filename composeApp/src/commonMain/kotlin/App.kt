@@ -14,6 +14,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,6 +35,7 @@ import dependecies.MyViewModel
 import kmpprojectlack.composeapp.generated.resources.Res
 import kmpprojectlack.composeapp.generated.resources.hello_world
 import kmpprojectlack.composeapp.generated.resources.pikachu
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import networking.InsultCensorClient
 import org.jetbrains.compose.resources.painterResource
@@ -47,6 +53,7 @@ import util.onSuccess
 fun App(
     batteryManager: BatteryManager,
     client: InsultCensorClient,
+    prefs: DataStore<Preferences>,
 ) {
     MaterialTheme {
         var censoredText by remember {
@@ -64,6 +71,13 @@ fun App(
         var errorMessage by remember {
             mutableStateOf<NetworkError?>(null)
         }
+
+        val counter by prefs
+            .data
+            .map {
+                val counterKey = intPreferencesKey("counter")
+                it[counterKey] ?: 0
+            }.collectAsState(0)
 
         val scope = rememberCoroutineScope()
 
@@ -147,6 +161,17 @@ fun App(
                                     text = it.name,
                                     color = Color.Red,
                                 )
+                            }
+
+                            Button(onClick = {
+                                scope.launch {
+                                    prefs.edit { dataStore ->
+                                        val counterKey = intPreferencesKey("counter")
+                                        dataStore[counterKey] = counter + 1
+                                    }
+                                }
+                            }) {
+                                Text("Increment: $counter")
                             }
                         }
                     }

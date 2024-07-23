@@ -17,5 +17,9 @@ fun MainViewController() =
                 remember {
                     InsultCensorClient(createHttpClient(Darwin.create()))
                 },
+            prefs =
+                remember {
+                    createDataStore()
+                },
         )
     }
