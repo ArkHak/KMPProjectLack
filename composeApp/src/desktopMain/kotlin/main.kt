@@ -8,6 +8,10 @@ import networking.createHttpClient
 
 fun main() {
     initKoin()
+    val prefs =
+        createDataStore {
+            DATA_STORE_FILE_NAME
+        }
     application {
         Window(
             onCloseRequest = ::exitApplication,
@@ -18,6 +22,10 @@ fun main() {
                 client =
                     remember {
                         InsultCensorClient(createHttpClient(OkHttp.create()))
+                    },
+                prefs =
+                    remember {
+                        prefs
                     },
             )
         }

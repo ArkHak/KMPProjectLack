@@ -13,6 +13,7 @@ fun main() {
         App(
             batteryManager = BatteryManager(),
             client = InsultCensorClient(createHttpClient(Js.create())),
+            prefs = createDataStore { DATA_STORE_FILE_NAME },
         )
     }
 }

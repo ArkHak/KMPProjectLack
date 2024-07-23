@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
+import createDataStore
 import io.ktor.client.engine.okhttp.OkHttp
 import networking.InsultCensorClient
 import networking.createHttpClient
@@ -16,12 +17,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             App(
-                batteryManager = remember {
-                    BatteryManager(context = applicationContext)
-                },
-                client = remember {
-                    InsultCensorClient(createHttpClient(OkHttp.create()))
-                }
+                batteryManager =
+                    remember {
+                        BatteryManager(context = applicationContext)
+                    },
+                client =
+                    remember {
+                        InsultCensorClient(createHttpClient(OkHttp.create()))
+                    },
+                prefs = remember { createDataStore(applicationContext) },
             )
         }
     }
