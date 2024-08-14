@@ -28,10 +28,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dependecies.MyViewModel
+import dev.icerock.moko.permissions.PermissionState
+import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import kmpprojectlack.composeapp.generated.resources.Res
 import kmpprojectlack.composeapp.generated.resources.hello_world
 import kmpprojectlack.composeapp.generated.resources.pikachu
@@ -40,7 +44,6 @@ import kotlinx.coroutines.launch
 import networking.InsultCensorClient
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -49,7 +52,6 @@ import util.onError
 import util.onSuccess
 
 @Composable
-@Preview
 fun App(
     batteryManager: BatteryManager,
     client: InsultCensorClient,
@@ -71,6 +73,20 @@ fun App(
         var errorMessage by remember {
             mutableStateOf<NetworkError?>(null)
         }
+
+        val factory = rememberPermissionsControllerFactory()
+        val controller =
+            remember(factory) {
+                factory.createPermissionsController()
+            }
+
+        BindEffect(controller)
+
+        // отдельная vm !ТОЛЬКО! ради тестов
+        val viewModelPermission =
+            viewModel {
+                PermissionsViewModel(controller)
+            }
 
         val counter by prefs
             .data
@@ -172,6 +188,29 @@ fun App(
                                 }
                             }) {
                                 Text("Increment: $counter")
+                            }
+
+                            when (viewModelPermission.state) {
+                                PermissionState.Granted -> {
+                                    Text("Record audio permission granted!")
+                                }
+
+                                PermissionState.DeniedAlways -> {
+                                    Text("Permission was permanently declined.")
+                                    Button(onClick = {
+                                        controller.openAppSettings()
+                                    }) {
+                                        Text("Open app settings")
+                                    }
+                                }
+
+                                else -> {
+                                    Button(onClick = {
+                                        viewModelPermission.provideOrRequestRecordingAudioPermission()
+                                    }) {
+                                        Text("Request permission")
+                                    }
+                                }
                             }
                         }
                     }

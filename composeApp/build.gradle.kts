@@ -71,7 +71,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.koin.android)
-            implementation(libs.lifecycle.viewmodel)
             implementation(libs.koin.androidx.compose)
 
             implementation(libs.ktor.client.okhttp)
@@ -84,6 +83,9 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+            implementation(libs.lifecycle.viewmodel)
+            implementation(libs.lifecycle.viewmodel.compose)
+
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
@@ -93,6 +95,9 @@ kotlin {
 
             api(libs.datastore.preferences)
             api(libs.datastore)
+
+            api(libs.moko.permissions)
+            api(libs.moko.permissions.compose)
         }
 
         commonTest.dependencies {
@@ -110,7 +115,6 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation(libs.lifecycle.viewmodel)
             implementation(libs.oshi.core)
 
             implementation(libs.ktor.client.okhttp)
