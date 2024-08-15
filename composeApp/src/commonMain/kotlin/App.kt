@@ -1,6 +1,8 @@
 @file:OptIn(KoinExperimentalAPI::class)
 
+import DateTimeScreen.DateTimeScreen
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -114,7 +116,8 @@ fun App(
                             Box(
                                 modifier =
                                     Modifier
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .background(color = Color.White),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Column(
@@ -127,7 +130,7 @@ fun App(
                                     Button(onClick = {
                                         navControllerSuper.navigate(ScreenB)
                                     }) {
-                                        Text("Navigate Screen 2")
+                                        Text("Navigate DateTime Screen")
                                     }
 
                                     Text(text = viewModel.getHelloWorldString())
@@ -234,7 +237,7 @@ fun App(
 
             composable<ScreenB> {
                 Column {
-                    Text(text = "Screen2")
+                    DateTimeScreen()
                 }
             }
         }

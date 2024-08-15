@@ -36,6 +36,8 @@ core-splashscreen = "1.0.1"
 
 serialization = "1.7.1"
 
+datetime = "0.6.0"
+
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
@@ -84,6 +86,9 @@ moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", ve
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "datetime"}
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
