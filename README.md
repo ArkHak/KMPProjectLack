@@ -20,6 +20,6 @@ If you face any issues, please report them on [GitHub](https://github.com/JetBra
 
 You can open the web application by running the `:composeApp:wasmJsBrowserDevelopmentRun` Gradle task.
 
-P.S.
-Это Максимально простой пример использования разных фич в КМП.
-Тут не соблюдаются архитектурные решения и т.д. ЭТО СДЕЛАНО СПЕЦИАЛЬНО ДЛЯ УПРОЩЕНИЯ.
+#P.S.
+***Это Максимально простой пример использования разных фич в КМП.
+Тут не соблюдаются архитектурные решения и т.д. ЭТО СДЕЛАНО СПЕЦИАЛЬНО ДЛЯ УПРОЩЕНИЯ.***
