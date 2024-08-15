@@ -88,6 +88,8 @@ kotlin {
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.lifecycle.viewmodel.compose)
 
+            implementation(libs.kotlinx.serialization.json)
+
             api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)

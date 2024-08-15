@@ -17,7 +17,7 @@ oshiCore = "6.6.1"
 
 koin = "3.6.0-Beta4"
 koinComposeMultiplatform = "1.2.0-Beta4"
-navigationCompose = "2.8.0-alpha02"
+navigationCompose = "2.8.0-alpha08"
 lifecycleViewModel = "2.8.4"
 lifecycleViewModelCompose = "2.8.0"
 lifecycleViewModelWasm = "0.8.0"
@@ -33,6 +33,8 @@ datastore = "1.1.1"
 moko = "0.18.0"
 
 core-splashscreen = "1.0.1"
+
+serialization = "1.7.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -80,6 +82,8 @@ moko-permissions = { module = "dev.icerock.moko:permissions", version.ref = "mok
 moko-permissions-compose = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko" }
 
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

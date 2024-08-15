@@ -41,6 +41,7 @@ import kmpprojectlack.composeapp.generated.resources.hello_world
 import kmpprojectlack.composeapp.generated.resources.pikachu
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import networking.InsultCensorClient
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -58,157 +59,171 @@ fun App(
     prefs: DataStore<Preferences>,
 ) {
     MaterialTheme {
-        var censoredText by remember {
-            mutableStateOf<String?>(null)
-        }
+        val navControllerSuper = rememberNavController()
+        NavHost(
+            navController = navControllerSuper,
+            startDestination = ScreenA,
+        ) {
+            composable<ScreenA> {
+                var censoredText by remember {
+                    mutableStateOf<String?>(null)
+                }
 
-        var uncensoredText by remember {
-            mutableStateOf("")
-        }
+                var uncensoredText by remember {
+                    mutableStateOf("")
+                }
 
-        var isLoading by remember {
-            mutableStateOf(false)
-        }
+                var isLoading by remember {
+                    mutableStateOf(false)
+                }
 
-        var errorMessage by remember {
-            mutableStateOf<NetworkError?>(null)
-        }
+                var errorMessage by remember {
+                    mutableStateOf<NetworkError?>(null)
+                }
 
-        val factory = rememberPermissionsControllerFactory()
-        val controller =
-            remember(factory) {
-                factory.createPermissionsController()
-            }
+                val factory = rememberPermissionsControllerFactory()
+                val controller =
+                    remember(factory) {
+                        factory.createPermissionsController()
+                    }
 
-        BindEffect(controller)
+                BindEffect(controller)
 
-        // отдельная vm !ТОЛЬКО! ради тестов
-        val viewModelPermission =
-            viewModel {
-                PermissionsViewModel(controller)
-            }
+                // отдельная vm !ТОЛЬКО! ради тестов
+                val viewModelPermission =
+                    viewModel {
+                        PermissionsViewModel(controller)
+                    }
 
-        val counter by prefs
-            .data
-            .map {
-                val counterKey = intPreferencesKey("counter")
-                it[counterKey] ?: 0
-            }.collectAsState(0)
+                val counter by prefs
+                    .data
+                    .map {
+                        val counterKey = intPreferencesKey("counter")
+                        it[counterKey] ?: 0
+                    }.collectAsState(0)
 
-        val scope = rememberCoroutineScope()
+                val scope = rememberCoroutineScope()
 
-        KoinContext {
-            NavHost(
-                navController = rememberNavController(),
-                startDestination = "home",
-            ) {
-                composable("home") {
-                    val viewModel = koinViewModel<MyViewModel>()
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
+                KoinContext {
+                    NavHost(
+                        navController = rememberNavController(),
+                        startDestination = "home",
                     ) {
-                        Column(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Text(text = viewModel.getHelloWorldString())
-                            Image(
-                                modifier = Modifier.size(240.dp),
-                                painter = painterResource(Res.drawable.pikachu),
-                                contentDescription = "pikachu",
-                            )
-                            Text(text = stringResource(Res.string.hello_world))
-                            Text(text = Greeting().greet())
-                            Text(text = "Уровень заряда батареи: ${batteryManager.getBatteryLevel()}")
-
-                            TextField(
-                                value = uncensoredText,
-                                onValueChange = { uncensoredText = it },
+                        composable("home") {
+                            val viewModel = koinViewModel<MyViewModel>()
+                            Box(
                                 modifier =
                                     Modifier
-                                        .padding(horizontal = 16.dp)
-                                        .fillMaxWidth(),
-                                placeholder = {
-                                    Text("Uncensored text")
-                                },
-                            )
+                                        .fillMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Column(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    Button(onClick = {
+                                        navControllerSuper.navigate(ScreenB)
+                                    }) {
+                                        Text("Navigate Screen 2")
+                                    }
 
-                            Button(onClick = {
-                                scope.launch {
-                                    isLoading = true
-                                    errorMessage = null
+                                    Text(text = viewModel.getHelloWorldString())
+                                    Image(
+                                        modifier = Modifier.size(240.dp),
+                                        painter = painterResource(Res.drawable.pikachu),
+                                        contentDescription = "pikachu",
+                                    )
+                                    Text(text = stringResource(Res.string.hello_world))
+                                    Text(text = Greeting().greet())
+                                    Text(text = "Уровень заряда батареи: ${batteryManager.getBatteryLevel()}")
 
-                                    client
-                                        .censorWords(uncensoredText)
-                                        .onSuccess {
-                                            censoredText = it
-                                        }.onError {
-                                            errorMessage = it
-                                        }
-
-                                    isLoading = false
-                                }
-                            }) {
-                                if (isLoading) {
-                                    CircularProgressIndicator(
+                                    TextField(
+                                        value = uncensoredText,
+                                        onValueChange = { uncensoredText = it },
                                         modifier =
                                             Modifier
-                                                .size(15.dp),
-                                        strokeWidth = 1.dp,
-                                        color = Color.White,
+                                                .padding(horizontal = 16.dp)
+                                                .fillMaxWidth(),
+                                        placeholder = {
+                                            Text("Uncensored text")
+                                        },
                                     )
-                                } else {
-                                    Text("Цензура!")
-                                }
-                            }
 
-                            censoredText?.let {
-                                Text(it)
-                            }
-
-                            errorMessage?.let {
-                                Text(
-                                    text = it.name,
-                                    color = Color.Red,
-                                )
-                            }
-
-                            Button(onClick = {
-                                scope.launch {
-                                    prefs.edit { dataStore ->
-                                        val counterKey = intPreferencesKey("counter")
-                                        dataStore[counterKey] = counter + 1
-                                    }
-                                }
-                            }) {
-                                Text("Increment: $counter")
-                            }
-
-                            when (viewModelPermission.state) {
-                                PermissionState.Granted -> {
-                                    Text("Record audio permission granted!")
-                                }
-
-                                PermissionState.DeniedAlways -> {
-                                    Text("Permission was permanently declined.")
                                     Button(onClick = {
-                                        controller.openAppSettings()
-                                    }) {
-                                        Text("Open app settings")
-                                    }
-                                }
+                                        scope.launch {
+                                            isLoading = true
+                                            errorMessage = null
 
-                                else -> {
-                                    Button(onClick = {
-                                        viewModelPermission.provideOrRequestRecordingAudioPermission()
+                                            client
+                                                .censorWords(uncensoredText)
+                                                .onSuccess {
+                                                    censoredText = it
+                                                }.onError {
+                                                    errorMessage = it
+                                                }
+
+                                            isLoading = false
+                                        }
                                     }) {
-                                        Text("Request permission")
+                                        if (isLoading) {
+                                            CircularProgressIndicator(
+                                                modifier =
+                                                    Modifier
+                                                        .size(15.dp),
+                                                strokeWidth = 1.dp,
+                                                color = Color.White,
+                                            )
+                                        } else {
+                                            Text("Цензура!")
+                                        }
+                                    }
+
+                                    censoredText?.let {
+                                        Text(it)
+                                    }
+
+                                    errorMessage?.let {
+                                        Text(
+                                            text = it.name,
+                                            color = Color.Red,
+                                        )
+                                    }
+
+                                    Button(onClick = {
+                                        scope.launch {
+                                            prefs.edit { dataStore ->
+                                                val counterKey = intPreferencesKey("counter")
+                                                dataStore[counterKey] = counter + 1
+                                            }
+                                        }
+                                    }) {
+                                        Text("Increment: $counter")
+                                    }
+
+                                    when (viewModelPermission.state) {
+                                        PermissionState.Granted -> {
+                                            Text("Record audio permission granted!")
+                                        }
+
+                                        PermissionState.DeniedAlways -> {
+                                            Text("Permission was permanently declined.")
+                                            Button(onClick = {
+                                                controller.openAppSettings()
+                                            }) {
+                                                Text("Open app settings")
+                                            }
+                                        }
+
+                                        else -> {
+                                            Button(onClick = {
+                                                viewModelPermission.provideOrRequestRecordingAudioPermission()
+                                            }) {
+                                                Text("Request permission")
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -216,6 +231,18 @@ fun App(
                     }
                 }
             }
+
+            composable<ScreenB> {
+                Column {
+                    Text(text = "Screen2")
+                }
+            }
         }
     }
 }
+
+@Serializable
+object ScreenA
+
+@Serializable
+object ScreenB
