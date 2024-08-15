@@ -74,6 +74,8 @@ kotlin {
             implementation(libs.koin.androidx.compose)
 
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.core.splashscreen)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -85,6 +87,8 @@ kotlin {
 
             implementation(libs.lifecycle.viewmodel)
             implementation(libs.lifecycle.viewmodel.compose)
+
+            implementation(libs.kotlinx.serialization.json)
 
             api(libs.koin.core)
             implementation(libs.koin.compose)
@@ -98,6 +102,8 @@ kotlin {
 
             api(libs.moko.permissions)
             api(libs.moko.permissions.compose)
+
+            implementation(libs.kotlinx.datetime)
         }
 
         commonTest.dependencies {
